@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Юридический словарь простыми словами</title>
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --primary-light: #eff6ff;
+      --accent: #2563eb;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --bg: #f9fafb;
+      --white: #ffffff;
+      --border: #e5e7eb;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    header {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    .nav-wrap {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      min-height: 64px;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 8px 0;
+    }
+
+    .logo {
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: var(--primary);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .logo:hover {
+      color: var(--accent);
+    }
+
+    nav {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--text);
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+
+    nav a:hover {
+      color: var(--accent);
+    }
+
+    section {
+      padding: 48px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      color: var(--primary);
+      margin-bottom: 20px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      max-width: 680px;
+      margin-bottom: 24px;
+    }
+
+    .search-box {
+      display: flex;
+      gap: 10px;
+      max-width: 600px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 1rem;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      outline: none;
+      transition: var(--transition);
+      background: var(--white);
+    }
+
+    .search-box input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    }
+
+    .categories {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .cat-btn {
+      padding: 10px 16px;
+      border: 1px solid var(--border);
+      background: var(--white);
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+
+    .cat-btn.active, .cat-btn:hover {
+      background: var(--primary);
+      color: var(--white);
+      border-color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    .results-count {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .term-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      cursor: pointer;
+      transition: var(--transition);
+      opacity: 0;
+      transform: translateY(15px);
+      animation: fadeInUp 0.4s ease forwards;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .term-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.08);
+      border-color: var(--accent);
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 4px 10px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .term-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+      color: var(--text);
+      transition: var(--transition);
+    }
+
+    .term-card:hover h3 {
+      color: var(--accent);
+    }
+
+    .term-card p {
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    .card-hint {
+      margin-top: 12px;
+      font-size: 0.85rem;
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .modal-backdrop {
+      display: flex;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0);
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 200;
+      pointer-events: none;
+      transition: background 0.3s ease;
+    }
+
+    .modal-backdrop.open {
+      background: rgba(0, 0, 0, 0.5);
+      pointer-events: auto;
+    }
+
+    .modal {
+      background: var(--white);
+      max-width: 560px;
+      width: 100%;
+      border-radius: 12px;
+      padding: 24px;
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: scale(0.95) translateY(10px);
+      opacity: 0;
+      transition: var(--transition);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-backdrop.open .modal {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--muted);
+      padding: 4px 8px;
+      transition: var(--transition);
+      border-radius: 50%;
+    }
+
+    .modal-close:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .example-box {
+      background: var(--primary-light);
+      border-left: 4px solid var(--accent);
+      padding: 12px 16px;
+      margin: 16px 0;
+      border-radius: 4px;
+      font-size: 0.95rem;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .step-item {
+      background: var(--white);
+      padding: 20px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      transition: var(--transition);
+    }
+
+    .step-item:hover {
+      border-color: var(--accent);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    }
+
+    .sources-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .sources-list a {
+      color: var(--accent);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .sources-list a:hover {
+      text-decoration: underline;
+    }
+
+    footer {
+      background: #111827;
+      color: #d1d5db;
+      padding: 32px 0;
+      font-size: 0.9rem;
+    }
+
+    .disclaimer {
+      background: #1f2937;
+      padding: 14px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      border-left: 3px solid #60a5fa;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: var(--muted);
+      grid-column: 1 / -1;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container nav-wrap">
+      <a href="#search-section" class="logo">ПравоПростымиСловами</a>
+      <nav>
+        <a href="#search-section">Поиск</a>
+        <a href="#catalog-section">Каталог терминов</a>
+        <a href="#guide-section">Как пользоваться</a>
+        <a href="#sources-section">Источники НПА</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section id="search-section">
+      <div class="container">
+        <h1>Юридический словарь простыми словами</h1>
+        <p class="subtitle">Переводим сложные правовые термины законодательства Республики Казахстан на понятный человеческий язык с примерами из жизни.</p>
+        <div class="search-box">
+          <input type="text" id="searchInput" placeholder="Введите термин (например: Неустойка, Наследство, Алименты)...">
+        </div>
+      </div>
+    </section>
+
+    <section id="catalog-section">
+      <div class="container">
+        <h2>Каталог терминов</h2>
+        <div class="categories" id="categoryButtons">
+          <button class="cat-btn active" data-cat="all">Все категории</button>
+          <button class="cat-btn" data-cat="Гражданское право">Гражданское право</button>
+          <button class="cat-btn" data-cat="Трудовое право">Трудовое право</button>
+          <button class="cat-btn" data-cat="Семейное право">Семейное право</button>
+          <button class="cat-btn" data-cat="Наследственное право">Наследственное право</button>
+          <button class="cat-btn" data-cat="Уголовное право">Уголовное право</button>
+          <button class="cat-btn" data-cat="Конституционное право">Конституционное право</button>
+        </div>
+        <div class="results-count" id="resultsCount"></div>
+        <div class="cards-grid" id="termsGrid"></div>
+      </div>
+    </section>
+
+    <section id="guide-section">
+      <div class="container">
+        <h2>Как пользоваться словарем</h2>
+        <div class="steps-grid">
+          <div class="step-item">
+            <strong>1. Введите слово в поиск</strong>
+            <p>Начните печатать нужный термин в верхней строке — список отфильтруется автоматически.</p>
+          </div>
+          <div class="step-item">
+            <strong>2. Выберите отрасль права</strong>
+            <p>Нажмите на нужную категорию, чтобы изучить термины только из интересующей сферы.</p>
+          </div>
+          <div class="step-item">
+            <strong>3. Нажмите на карточку</strong>
+            <p>Откроется подробное объяснение простыми словами, реальный жизненный пример и ссылка на закон РК.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sources-section">
+      <div class="container">
+        <h2>Нормативные правовые акты (первоисточники)</h2>
+        <ul class="sources-list">
+          <li>• Конституция Республики Казахстан от 30 августа 1995 года — <a href="https://adilet.zan.kz/rus/docs/K950001000_" target="_blank" rel="noopener">adilet.zan.kz</a></li>
+          <li>• Гражданский кодекс Республики Казахстан (Особенная часть) от 1 июля 1999 года — <a href="https://adilet.zan.kz/rus/docs/K990000409_" target="_blank" rel="noopener">adilet.zan.kz</a></li>
+          <li>• Трудовой кодекс Республики Казахстан от 23 ноября 2015 года — <a href="https://adilet.zan.kz/rus/docs/K1500000414" target="_blank" rel="noopener">adilet.zan.kz</a></li>
+          <li>• Кодекс о браке (супружестве) и семье РК от 26 декабря 2011 года — <a href="https://adilet.zan.kz/rus/docs/K1100000518" target="_blank" rel="noopener">adilet.zan.kz</a></li>
+          <li>• Уголовный кодекс Республики Казахстан от 3 июля 2014 года — <a href="https://adilet.zan.kz/rus/docs/K1400000226" target="_blank" rel="noopener">adilet.zan.kz</a></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="disclaimer">
+        Оговорка: Информация на сайте носит исключительно справочный и образовательный характер и не является индивидуальной юридической консультацией.
+      </div>
+      <p>Дата проверки содержания по официальным источникам (adilet.zan.kz): 15.11.2026 г.</p>
+    </div>
+  </footer>
+
+  <div class="modal-backdrop" id="termModal">
+    <div class="modal">
+      <button class="modal-close" id="closeModal" aria-label="Закрыть">&times;</button>
+      <span class="badge" id="modalCategory"></span>
+      <h3 id="modalTitle" style="font-size: 1.4rem; margin-bottom: 12px;"></h3>
+      <p id="modalSimple"></p>
+      <div class="example-box">
+        <strong>Пример из жизни:</strong>
+        <p id="modalExample" style="margin-top: 4px;"></p>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--muted);"><strong>Источник:</strong> <span id="modalLaw"></span></p>
+    </div>
+  </div>
+
+  <script>
+    const termsData = [
+      {
+        title: "Неустойка",
+        category: "Гражданское право",
+        short: "Денежный штраф или пеня за нарушение условий договора.",
+        simple: "Это сумма денег, которую один человек или компания обязаны выплатить другому, если нарушили договор — например, опоздали со сдачей работы или задержали оплату.",
+        example: "Айдос заказал изготовление шкафа к 10 числу. Мастер привез его только 20-го. По договору за каждый день просрочки положена неустойка 0,5% — мастер обязан вернуть часть суммы.",
+        law: "Статья 293 Гражданского кодекса РК"
+      },
+      {
+        title: "Доверенность",
+        category: "Гражданское право",
+        short: "Письменное разрешение действовать от имени другого человека.",
+        simple: "Официальный документ, которым один человек передает другому право совершать за него определенные действия: забрать посылку, продать машину или представлять интересы в суде.",
+        example: "Алия уехала в командировку и оформила у нотариуса доверенность на брата, чтобы он смог получить ее готовую банковскую карту и подписать договор.",
+        law: "Статья 167 Гражданского кодекса РК"
+      },
+      {
+        title: "Задаток",
+        category: "Гражданское право",
+        short: "Деньги, подтверждающие серьезность намерений купить товар или услугу.",
+        simple: "Часть суммы, которую покупатель передает продавцу заранее в счет будущей оплаты. Если передумает покупатель — деньги остаются у продавца. Если передумает продавец — он возвращает задаток в двойном размере.",
+        example: "Тимур нашел квартиру и передал хозяину 100 000 тенге задатка. Хозяин передумал продавать квартиру и по закону обязан вернуть Тимуру 200 000 тенге.",
+        law: "Статья 337 Гражданского кодекса РК"
+      },
+      {
+        title: "Ипотека",
+        category: "Гражданское право",
+        short: "Залог недвижимости для обеспечения возврата банковского кредита.",
+        simple: "Специальный вид кредита на покупку жилья, при котором купленная квартира или дом находятся в залоге у банка до тех пор, пока заемщик полностью не выплатит весь долг.",
+        example: "Семья купила квартиру в новостройке через ипотечный кредит сроком на 15 лет. Пока долг не погашен, продать квартиру без согласия банка нельзя.",
+        law: "Закон РК «Об ипотеке недвижимого имущества»"
+      },
+      {
+        title: "Наследство",
+        category: "Наследственное право",
+        short: "Переход имущества умершего человека к его родственникам или другим лицам.",
+        simple: "Имущество, права и обязанности гражданина после его смерти переходят к другим людям (наследникам) по закону или по завещанию.",
+        example: "После ухода дедушки остался загородный дом. Согласно завещанию, дом перешел его внуку, который оформил права у нотариуса.",
+        law: "Статья 1038 Гражданского кодекса РК (Особенная часть)"
+      },
+      {
+        title: "Обязательная доля в наследстве",
+        category: "Наследственное право",
+        short: "Часть имущества, которая выдается независимо от текста завещания.",
+        simple: "Закон защищает нетрудоспособных и несовершеннолетних родственников (например, детей или пожилых родителей): они получают часть наследства даже если в завещании их забыли указать.",
+        example: "Отец оставил квартиру другу, но у него осталась несовершеннолетняя дочь. По закону она гарантированно получит обязательную долю.",
+        law: "Статья 1069 Гражданского кодекса РК"
+      },
+      {
+        title: "Прогул",
+        category: "Трудовое право",
+        short: "Отсутствие на рабочем месте без уважительной причины более 3 часов подряд.",
+        simple: "Ситуация, когда сотрудник не появился на работе в положенное время или ушел раньше без разрешения и веских оснований, и это длилось более трех часов подряд в течение рабочего дня.",
+        example: "Менеджер Ерлан проспал и пришел на работу на 4 часа позже положенного времени без справки от врача. Работодатель имеет право расторгнуть договор за прогул.",
+        law: "Статья 52 Трудового кодекса РК"
+      },
+      {
+        title: "Испытательный срок",
+        category: "Трудовое право",
+        short: "Период проверки соответствия сотрудника поручаемой работе (до 3 месяцев).",
+        simple: "Время при приеме на работу, которое дается для проверки квалификации сотрудника. По Трудовому кодексу РК испытательный срок не может превышать 3 месяцев (для руководителей — до 6 месяцев).",
+        example: "Динара устроилась бухгалтером с испытательным сроком 2 месяца. При отрицательном результате испытания работодатель вправе расторгнуть трудовой договор, письменно уведомив её.",
+        law: "Статья 36 Трудового кодекса РК"
+      },
+      {
+        title: "Алименты",
+        category: "Семейное право",
+        short: "Обязательные регулярные выплаты на содержание детей или нетрудоспособных родственников.",
+        simple: "Деньги, которые один из родителей, проживающий отдельно, обязан выплачивать на воспитание и содержание несовершеннолетних детей (на одного ребенка — 1/4 заработка).",
+        example: "После развода отец ребенка ежемесячно перечисляет матери 25% (1/4 долю) от своей заработной платы в качестве алиментов на содержание одного сына.",
+        law: "Статья 138 Кодекса о браке (супружестве) и семье РК"
+      },
+      {
+        title: "Брачный договор",
+        category: "Семейное право",
+        short: "Соглашение супругов об их имущественных правах и обязанностях.",
+        simple: "Официальный документ, который муж и жена могут составить у нотариуса, чтобы заранее разделить, кому что принадлежит и как будет делиться имущество в случае развода.",
+        example: "Супруги подписали брачный договор, по которому квартира, купленная мужем до брака, остается исключительно его собственностью.",
+        law: "Статья 40 Кодекса о браке (супружестве) и семье РК"
+      },
+      {
+        title: "Суверенитет",
+        category: "Конституционное право",
+        short: "Полная независимость государства во внутренних и внешних делах.",
+        simple: "Это право страны самостоятельно принимать законы, управлять своей территорией, иметь свою валюту и армию без подчинения другим государствам.",
+        example: "Республика Казахстан самостоятельно определяет свою налоговую политику и защищает свои границы.",
+        law: "Статья 2 Конституции РК"
+      },
+      {
+        title: "Конституция",
+        category: "Конституционное право",
+        short: "Главный закон страны, обладающий высшей юридической силой.",
+        simple: "Основной документ государства, в котором записаны главные права и свободы граждан, а также правила работы органов власти.",
+        example: "Ни один закон в стране не может противоречить Конституции Республики Казахстан.",
+        law: "Статья 4 Конституции РК"
+      },
+      {
+        title: "Презумпция невиновности",
+        category: "Уголовное право",
+        short: "Человек считается невиновным, пока его вина не доказана судом.",
+        simple: "Никто не обязан доказывать свою невиновность. Пока суд не вынесет обвинительный приговор, подозреваемого нельзя называть преступником.",
+        example: "Данияра заподозрили в краже, но пока суд не вынес приговор, он юридически считается невиновным.",
+        law: "Статья 77 Конституции РК"
+      },
+      {
+        title: "Необходимая оборона",
+        category: "Уголовное право",
+        short: "Законная защита себя или других людей от опасного нападения.",
+        simple: "Право человека защищать свою жизнь и здоровье от преступного посягательства, даже если нападавшему будет причинен вред.",
+        example: "Вечером на Марата напали, он защищался и причинил нападавшему вред в рамках самообороны — это признается законным.",
+        law: "Статья 32 Уголовного кодекса РК"
+      }
+    ];
+
+    const grid = document.getElementById("termsGrid");
+    const searchInput = document.getElementById("searchInput");
+    const catButtons = document.querySelectorAll(".cat-btn");
+    const resultsCount = document.getElementById("resultsCount");
+
+    const modal = document.getElementById("termModal");
+    const closeModalBtn = document.getElementById("closeModal");
+
+    let currentCategory = "all";
+    let searchQuery = "";
+
+    function renderTerms() {
+      const q = searchQuery.trim().toLowerCase();
+      const filtered = termsData.filter(item => {
+        const matchesCat = currentCategory === "all" || item.category === currentCategory;
+        const matchesSearch = item.title.toLowerCase().includes(q) || item.short.toLowerCase().includes(q);
+        return matchesCat && matchesSearch;
+      });
+
+      resultsCount.textContent = `Найдено терминов: ${filtered.length}`;
+      grid.innerHTML = "";
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="empty-state">По вашему запросу ничего не найдено. Попробуйте изменить слово или выбрать категорию «Все категории».</div>`;
+        return;
+      }
+
+      filtered.forEach((item, index) => {
+        const card = document.createElement("div");
+        card.className = "term-card";
+        card.style.animationDelay = `${index * 0.04}s`;
+        card.innerHTML = `
+          <span class="badge">${item.category}</span>
+          <h3>${item.title}</h3>
+          <p>${item.short}</p>
+          <div class="card-hint">Нажмите, чтобы узнать подробнее →</div>
+        `;
+        card.addEventListener("click", () => openModal(item));
+        grid.appendChild(card);
+      });
+    }
+
+    function openModal(item) {
+      document.getElementById("modalCategory").textContent = item.category;
+      document.getElementById("modalTitle").textContent = item.title;
+      document.getElementById("modalSimple").textContent = item.simple;
+      document.getElementById("modalExample").textContent = item.example;
+      document.getElementById("modalLaw").textContent = item.law;
+      modal.classList.add("open");
+    }
+
+    function closeModal() {
+      modal.classList.remove("open");
+    }
+
+    closeModalBtn.addEventListener("click", closeModal);
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeModal();
+    });
+
+    searchInput.addEventListener("input", (e) => {
+      searchQuery = e.target.value;
+      renderTerms();
+    });
+
+    catButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        catButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentCategory = btn.dataset.cat;
+        renderTerms();
+      });
+    });
+
+    renderTerms();
+  </script>
+</body>
+</html>
